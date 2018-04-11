@@ -18,7 +18,7 @@ def non_letter?(letter)
   return /[[a-zA-Z]]/.match(letter.to_s) ? false : true 
 end
 
-def scramble_letter(letter, move)
+def encode_letter(letter, move)
   return letter if non_letter?(letter)
   index = ALPHABET.index(letter.downcase)
   move.times do
@@ -28,3 +28,11 @@ def scramble_letter(letter, move)
   return capital?(letter) ? ALPHABET[index].upcase : ALPHABET[index]
 end
 
+def encode_msg(msg, cipher=nil)
+  cipher ||= make_cipher()
+  plain_msg = string_prep(msg)
+  encoded_msg = plain_msg.map do |char| 
+    encode_letter(char,cipher)
+  end.join("")
+  return [encoded_msg, cipher]
+end

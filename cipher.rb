@@ -36,3 +36,9 @@ def encode_msg(msg, cipher=nil)
   end.join("")
   return [encoded_msg, cipher]
 end
+
+def test_input
+  foo = gets.strip
+  return foo
+end
+

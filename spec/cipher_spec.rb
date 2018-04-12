@@ -149,5 +149,14 @@ describe "cipher prep" do
 
   end
 
+  context "input test" do
+    it "should return what is given" do
+      expect(self).to receive(:gets).and_return("bar")
+      expect(test_input).to eq("bar")
+    end
+
+  end
+
+
 end
 

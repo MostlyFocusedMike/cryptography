@@ -41,4 +41,10 @@ def test_input
   foo = gets.strip
   return foo
 end
+def test_puts 
+  puts "hello there"
+end
+def test_print
+  print "hello there"
+end
 

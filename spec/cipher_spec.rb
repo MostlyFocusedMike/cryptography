@@ -157,6 +157,21 @@ describe "cipher prep" do
 
   end
 
+  context "output tests" do
+    it "should check puts is ok" do
+      expect($stdout).to receive(:puts).with("hello there")
+      test_puts
+    end
+    it "should check puts is ok new version" do
+      expect{test_puts}.to output("hello there\n").to_stdout
+    end
+    it "should check print is ok new version" do
+      expect{test_print}.to output("hello there").to_stdout
+    end
+
+  end
+
+
 
 end
 

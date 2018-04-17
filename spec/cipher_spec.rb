@@ -1,3 +1,25 @@
+
+#  context "input test" do
+#    it "should return what is given" do
+#      expect(self).to receive(:gets).and_return("bar")
+#      expect(test_input).to eq("bar")
+#    end
+#
+#  end
+#
+#  context "output tests" do
+#    it "should check puts is ok" do
+#      expect($stdout).to receive(:puts).with("hello there")
+#      test_puts
+#    end
+#    it "should check puts is ok new version" do
+#      expect{test_puts}.to output("hello there\n").to_stdout
+#    end
+#    it "should check print is ok new version" do
+#      expect{test_print}.to output("hello there").to_stdout
+#    end
+#
+#  end
 require_relative "../cipher.rb"
            # expect(sa.has_vowels? test_string).to be false
 
@@ -117,61 +139,47 @@ describe "cipher prep" do
     it "should work with a string and cipher argument" do
       expect {encode_msgi("hey", 3) }.not_to raise_error(ArgumentError)
     end
-    it "should return an array" do
-      expect(encode_msg("hh").kind_of?(Array)).to be true
-    end
-    it "should have a string in the first index" do
-      expect(encode_msg("hh")[0].kind_of?(String)).to be true
-    end
-    it "should have an int in the 2nd index" do
-      expect(encode_msg("hh")[1].kind_of?(Integer)).to be true
+    it "should return a string" do
+      expect(encode_msg("hh").kind_of?(String)).to be true
     end
     it "should return a new message" do
       msg = "hello"
-      expect(encode_msg(msg)[0]).not_to eq(msg)
+      expect(encode_msg(msg)).not_to eq(msg)
     end
     it "should return a new message of same length" do
       msg = "hello"
 
-      expect(encode_msg(msg)[0].length).to eq(msg.length)
+      expect(encode_msg(msg).length).to eq(msg.length)
     end
     it "should return 'def' when given 'abc'' with cpher 3" do
-      expect(encode_msg("abc", 3)[0]).to eq("def")
+      expect(encode_msg("abc", 3)).to eq("def")
     end
     it "should conserve spaces in message" do
       msg = "Hello there"
-      expect(encode_msg(msg, 0)[0]).to eq("Hello there")
+      expect(encode_msg(msg, 0)).to eq("Hello there")
     end
     it "should conserve punctuiation" do
       msg = "Hello, there."
-      expect(encode_msg(msg, 0)[0]).to eq(msg)
+      expect(encode_msg(msg, 0)).to eq(msg)
     end
 
   end
 
-  context "input test" do
-    it "should return what is given" do
-      expect(self).to receive(:gets).and_return("bar")
-      expect(test_input).to eq("bar")
+  context "final message format" do
+    it "should take a string and integer" do 
+      expect{ final_msg("hey", 1)}.not_to raise_error(ArgumentError)
+    end
+    it "should output a string" do
+      expect{final_msg("hey", 1)}.to output("hey\n\tcipher: 1\n").to_stdout
+    end
+  end
+
+  context "encoder class" do
+    it "should use a class to encode a msg" do
+      machine = Encoder.new
+      expect {machine.encode("abc", 3)}.to output("def\n\tcipher: 3\n").to_stdout
     end
 
   end
-
-  context "output tests" do
-    it "should check puts is ok" do
-      expect($stdout).to receive(:puts).with("hello there")
-      test_puts
-    end
-    it "should check puts is ok new version" do
-      expect{test_puts}.to output("hello there\n").to_stdout
-    end
-    it "should check print is ok new version" do
-      expect{test_print}.to output("hello there").to_stdout
-    end
-
-  end
-
-
-
 end
 

@@ -175,11 +175,32 @@ describe "cipher prep" do
   end
 
   context "encoder class" do
+    before(:each) do
+      @machine = Encoder.new
+      @machine.msg = "abc"
+      @machine.cipher = 3
+    end
     it "should use a class to encode a msg" do
-      machine = Encoder.new
-      expect {machine.encode("abc", 3)}.to output("def\n\tcipher: 3\n").to_stdout
+      expect {@machine.encode_user_msg}.to output("def\n\tcipher: 3\n").to_stdout
+    end
+    it "should work without a defined cipher" do
+      new_machine = Encoder.new
+      new_machine.msg = "abc"
+      expect{@machine.encode_user_msg}.to output(/[a-z]{3}\s+cipher: \d*/).to_stdout
     end
 
+
+
+
   end
+
+  context "run test" do
+    it "should take a gets" do
+      machine = Encoder.new
+      expect(machine).to receive(:gets).and_return("abc")
+      expect{machine.encode_user_msg}.to output(/[a-z]{3}\s+cipher: \d*/).to_stdout
+    end
+  end
+
 end
 

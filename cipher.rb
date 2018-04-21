@@ -56,12 +56,16 @@ class Encoder
   ALPHABET = ["a","b","c","d","e","f","g","h","i","j","k","l",
             "m","n",'o','p','q','r','s','t','u','v','w','x',
             'y','z']
-  attr_accessor :cipher, :msg
+  attr_accessor :cipher, :msg, :encoded_msg
   def initialize
     self.make_cipher
   end
   def get_user_msg
     @msg = gets.strip
+  end
+
+  def get_user_encoded_msg
+    @encoded_msg = gets.strip
   end
 
   def make_cipher
@@ -106,6 +110,10 @@ class Encoder
     @cipher ||= self.make_cipher
     encoded_msg = scramble_msg
     puts "#{encoded_msg}\n\tcipher: #{@cipher}"
+  end
+
+  def decode_user_msg
+    @encoded_msg ||= self.get_user_encoded_msg
   end
 
 

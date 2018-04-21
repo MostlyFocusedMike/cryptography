@@ -25,7 +25,7 @@ require_relative "../cipher.rb"
 
 describe "cipher prep" do
 
-  context "make cipher" do
+  context "make cipher" do 
     it "generates a number" do 
       expect(make_cipher.kind_of?(Integer)).to be true
     end
@@ -39,6 +39,7 @@ describe "cipher prep" do
       expect(any_0_26).not_to be true
     end
   end
+
   context "convert string to array" do 
     it "it should return an array" do
       str = "HelLo"
@@ -200,7 +201,55 @@ describe "cipher prep" do
       expect(machine).to receive(:gets).and_return("abc")
       expect{machine.encode_user_msg}.to output(/[a-z]{3}\s+cipher: \d*/).to_stdout
     end
-  end
+  end  
 
 end
+
+
+
+
+# take in a string
+#
+# chop that string into an array
+#
+# move each letter  one place over
+#
+# if the char is not a letter, do nothing
+#
+# join the new array into a string
+#
+# check if new string contains any of the basic words
+#
+# if so, add it to an array, "pos matches" 
+#
+# if not, ignore it
+#
+# repeat steps with the new string
+#
+# continue for 25 times
+#
+# of the pos matches array, check how many words are in each
+#
+# return the one with the most matches
+#
+# as well as an array of all the pos matches, in order as well
+
+
+describe "decode a message" do
+  context "getting user encoded msg" do
+    before(:each) do
+      @machine = Encoder.new
+    end
+    it "get user encoded message should get input to set message" do
+      allow(@machine).to receive(:gets).and_return("bar")
+      @machine.get_user_encoded_msg
+      expect(@machine.encoded_msg).to eq("bar") 
+    end
+    it "should take an encoded msg by variable assignment" do
+      @machine.encoded_msg = "bar"
+      expect(@machine.encoded_msg).to eq("bar") 
+    end
+  end
+end
+
 

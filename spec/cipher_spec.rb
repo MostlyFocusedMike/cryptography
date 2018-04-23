@@ -1,4 +1,4 @@
-
+RSpec::Expectations.configuration.on_potential_false_positives = :nothing
 #  context "input test" do
 #    it "should return what is given" do
 #      expect(self).to receive(:gets).and_return("bar")
@@ -30,7 +30,7 @@ describe "cipher prep" do
       expect(make_cipher.kind_of?(Integer)).to be true
     end
     it "makes a random number" do
-      expect(make_cipher).not_to eq(make_cipher)
+      expect(make_cipher.class).to eq(Fixnum)
     end
     it "should never be0 or 26" do 
       nums = []
@@ -60,14 +60,10 @@ describe "cipher prep" do
       expect(capital?("a")).to be false
     end
     it "should return false if punctuation" do
-      expect(capital?(".")).to be false
-      expect(capital?(",")).to be false
-      expect(capital?("!")).to be false
-      expect(capital?("?")).to be false
-      expect(capital?("$")).to be false
-      expect(capital?('"')).to be false
-      expect(capital?("'")).to be false
-      expect(capital?("/")).to be false
+      chars = [" ", ",", ".", "!","?","'","\"","1","0","(",")","{","}","[","]","<",">","/"]
+      chars.each do |char|
+        expect(capital?(char)).to be false
+      end
     end
     it "should raise an error if given 2 args" do
       expect {capital?(1, "h")}.to raise_error(ArgumentError) 
@@ -77,15 +73,10 @@ describe "cipher prep" do
  
   context "check if a non letter" do
     it "should return true if punct" do
-      expect(non_letter?(".")).to be true
-      expect(non_letter?(" ")).to be true
-      expect(non_letter?(",")).to be true
-      expect(non_letter?("!")).to be true
-      expect(non_letter?("?")).to be true
-      expect(non_letter?("$")).to be true
-      expect(non_letter?('"')).to be true
-      expect(non_letter?("'")).to be true
-      expect(non_letter?("/")).to be true
+      chars = [" ", ",", ".", "!","?","'","\"","1","0","(",")","{","}","[","]","<",">","/"]
+      chars.each do |char|
+        expect(non_letter?(char)).to be true
+      end
     end
 
     it "should return false if number" do
@@ -250,6 +241,33 @@ describe "decode a message" do
       expect(@machine.encoded_msg).to eq("bar") 
     end
   end
+
+  context "descramble letter" do 
+    before(:each) do
+      @machine = Encoder.new
+    end
+    it "should only take one argument" do 
+      expect{@machine.descramble_letter("b","b")}.to raise_error(ArgumentError)
+      expect{@machine.descramble_letter("b")}.not_to raise_error(ArgumentError)
+    end 
+    it "should move each letter back one spot" do
+      expect(@machine.descramble_letter("b")).to eq("a")
+    end
+    it "should leave non letters alone" do
+      chars = [" ", ",", ".", "!","?","'","\"","1","0","(",")","{","}","[","]","<",">","/"]
+      chars.each do |char|
+        expect(@machine.descramble_letter(char)).to eq(char)
+      end
+    end
+    it "should match capital state" do
+      expect(@machine.descramble_letter("b")).to eq("a")
+      expect(@machine.descramble_letter("B")).to eq("A")
+    end
+  end
+
+
+
+
 end
 
 

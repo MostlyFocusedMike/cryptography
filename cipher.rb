@@ -56,7 +56,18 @@ class Encoder
   ALPHABET = ["a","b","c","d","e","f","g","h","i","j","k","l",
             "m","n",'o','p','q','r','s','t','u','v','w','x',
             'y','z']
-  attr_accessor :cipher, :msg, :encoded_msg
+  COMMON_WORDS = ["a", "about", "all", "also", "and", "as", "at", "be", "because", "but", 
+                  "by", "can", "come", "could", "day", "do", "even", "find", "first", "for", 
+                  "from", "get", "give", "go", "have", "he", "her", "here", "him", "his", 
+                  "how", "I", "if", "in", "into", "it", "its", "just", "know", "like", "look", 
+                  "make", "man", "many", "me", "more", "my", "new", "no", "not", "now", "of", 
+                  "on", "one", "only", "or", "other", "our", "out", "people", "say", "see", 
+                  "she", "so", "some", "take", "tell", "than", "that", "the", "their", "them", 
+                  "then", "there", "these", "they", "thing", "think", "this", "those", "time", 
+                  "to", "two", "up", "use", "very", "want", "way", "we", "well", "what", 
+                  "when", "which", "who", "will", "with", "would", "year", "you", "your"]
+
+  attr_accessor :cipher, :msg, :encoded_msg, :newly_decoded_msg
   def initialize
     self.make_cipher
   end
@@ -108,15 +119,25 @@ class Encoder
   end
 
   def scramble_msg
-    plain_msg = string_prep(@msg)
-    encoded_msg = plain_msg.map do |char| 
+    msg_array = string_prep(@msg)
+    @newly_encoded_msg = msg_array.map do |char| 
       scramble_letter(char,@cipher)
     end.join("")
-    return encoded_msg
   end
 
   def descramble_msg
+    encoded_array = string_prep(@encoded_msg)
+    @newly_decoded_msg = encoded_array.map do |char|
+      descramble_letter(char)
+    end.join("")
+  end
 
+  def has_words? 
+    test_arr = @newly_decoded_msg.split
+    test_arr.any? do |word|
+      word = word.match(/\b(\w+)\b/)[0]
+      COMMON_WORDS.include?(word.downcase)
+    end
   end
 
 
@@ -126,8 +147,8 @@ class Encoder
     # previously given values to aid with testing
     @msg ||= self.get_user_msg 
     @cipher ||= self.make_cipher
-    newly_encoded_msg = scramble_msg
-    puts "#{newly_encoded_msg}\n\tcipher: #{@cipher}"
+    self.scramble_msg
+    puts "#{@newly_encoded_msg}\n\tcipher: #{@cipher}"
   end
 
   def decode_user_msg

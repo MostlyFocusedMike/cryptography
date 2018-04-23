@@ -126,10 +126,10 @@ describe "cipher prep" do
 
   context "encode message" do 
     it "should work with just a string argument" do
-      expect {encode_msgi("hey") }.not_to raise_error(ArgumentError)
+      expect {encode_msg("hey") }.not_to raise_error(ArgumentError)
     end
     it "should work with a string and cipher argument" do
-      expect {encode_msgi("hey", 3) }.not_to raise_error(ArgumentError)
+      expect {encode_msg("hey", 3) }.not_to raise_error(ArgumentError)
     end
     it "should return a string" do
       expect(encode_msg("hh").kind_of?(String)).to be true
@@ -265,7 +265,70 @@ describe "decode a message" do
     end
   end
 
+  context "descramble_encoded_msg" do
+    before(:each) do
+      @machine = Encoder.new
+    end
 
+    it "should take no arguments" do
+      expect{@machine.descramble_msg("b")}.to raise_error(ArgumentError)
+      expect{@machine.descramble_msg}.not_to raise_error(ArgumentError)
+    end
+    it "should return a string" do
+      @machine.encoded_msg = "abc"
+      @machine.descramble_msg
+      puts @machine.newly_decoded_msg
+      expect(@machine.newly_decoded_msg.class).to eq(String)
+    end
+    
+    it "should move all letters back one spot" do
+      @machine.encoded_msg = "bcd"
+      @machine.descramble_msg
+      expect(@machine.newly_decoded_msg).to eq("abc")
+    end
+    
+    it "should leave capitalization alone" do 
+      @machine.encoded_msg = "BbBbBb"
+      @machine.descramble_msg
+      expect(@machine.newly_decoded_msg).to eq("AaAaAa")
+    end
+
+    it "should leave punctuation and spaces alone" do
+      @machine.encoded_msg = ". , ! ? $ / #"
+      @machine.descramble_msg
+      expect(@machine.newly_decoded_msg).to eq(". , ! ? $ / #")
+    end
+  end
+
+  context "has words?" do
+    before(:each) do
+      @machine = Encoder.new
+    end
+    it "returns true when english words are present" do
+      @machine.newly_decoded_msg = "about all also a"
+      expect(@machine.has_words?).to be true
+    end
+    it "returns false when no english words are present" do
+      @machine.newly_decoded_msg = "asdd jgoo asddee helloooooo"
+      expect(@machine.has_words?).to be false
+    end
+    it "returns true when english words are present and capitalized" do
+      @machine.newly_decoded_msg = "About All Also"
+      expect(@machine.has_words?).to be true
+    end
+    it "returns true when english words are present and connected to punctuation" do
+      tricky_words = ["a.", "a,","a/","a<","a>",".a","\"a","'a"]
+      tricky_words.each do |word|
+        @machine.newly_decoded_msg = word
+        expect(@machine.has_words?).to be true
+      end
+    end
+    it "returns false when face with numbers" do
+      @machine.newly_decoded_msg = "1 2 3 4 1994"
+      expect(@machine.has_words?).to be false
+    end
+
+  end
 
 
 end

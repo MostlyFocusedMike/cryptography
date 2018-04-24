@@ -8,50 +8,7 @@
 # def test_print
 #   print "hello there"
 # end
-# 
-ALPHABET = ["a","b","c","d","e","f","g","h","i","j","k","l",
-            "m","n",'o','p','q','r','s','t','u','v','w','x',
-            'y','z']
-def make_cipher
-  return rand(1..25)
-end
-
-def string_prep(str) 
-  return str.split("")
-end
-
-def capital?(letter)
-  return /[[:upper:]]/.match(letter) ? true : false
-end
-
-def non_letter?(letter)
-  return /[[a-zA-Z]]/.match(letter.to_s) ? false : true 
-end
-
-def encode_letter(letter, move)
-  return letter if non_letter?(letter)
-  index = ALPHABET.index(letter.downcase)
-  move.times do
-    index += 1 
-    index = index > 25 ? 0 : index  
-  end 
-  return capital?(letter) ? ALPHABET[index].upcase : ALPHABET[index]
-end
-
-def encode_msg(msg, cipher=nil)
-  cipher ||= make_cipher()
-  plain_msg = string_prep(msg)
-  encoded_msg = plain_msg.map do |char| 
-    encode_letter(char,cipher)
-  end.join("")
-  return encoded_msg
-end
-
-def final_msg(msg, cipher)
-  puts "#{msg}\n\tcipher: #{cipher}\n"
-end
-
-
+#
 class Encoder
   ALPHABET = ["a","b","c","d","e","f","g","h","i","j","k","l",
             "m","n",'o','p','q','r','s','t','u','v','w','x',
@@ -67,9 +24,10 @@ class Encoder
                   "to", "two", "up", "use", "very", "want", "way", "we", "well", "what", 
                   "when", "which", "who", "will", "with", "would", "year", "you", "your"]
 
-  attr_accessor :cipher, :msg, :encoded_msg, :newly_decoded_msg
+  attr_accessor :cipher, :msg, :encoded_msg, :newly_decoded_msg, :pos_matches, :rejects
   def initialize
     self.make_cipher
+    @pos_matches = @rejects = []
   end
   def get_user_msg
     @msg = gets.strip
@@ -133,11 +91,29 @@ class Encoder
   end
 
   def has_words? 
-    test_arr = @newly_decoded_msg.split
-    test_arr.any? do |word|
+    # returns true if any eng
+    @newly_decoded_msg.split.any? do |word|
       word = word.match(/\b(\w+)\b/)[0]
       COMMON_WORDS.include?(word.downcase)
     end
+  end
+
+  def word_count
+    @newly_decoded_msg.split.map do |word|
+      if COMMON_WORDS.include?(word.downcase)
+        1
+      else
+       0
+      end 
+    end.reduce(0, :+)
+
+  end
+  def sort_decoded_msgs
+   if has_words? 
+     @pos_matches << @newly_decoded_msg
+   else
+     @rejects << @newly_decoded_msg
+   end
   end
 
 
@@ -163,4 +139,78 @@ def run
   encoder = Encoder.new 
   encoder.encode_user_msg
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# initial procedural functions
+ALPHABET = ["a","b","c","d","e","f","g","h","i","j","k","l",
+            "m","n",'o','p','q','r','s','t','u','v','w','x',
+            'y','z']
+def make_cipher
+  return rand(1..25)
+end
+
+def string_prep(str)
+  return str.split("")
+end
+
+def capital?(letter)
+  return /[[:upper:]]/.match(letter) ? true : false
+end
+
+def non_letter?(letter)
+  return /[[a-zA-Z]]/.match(letter.to_s) ? false : true
+end
+
+def encode_letter(letter, move)
+  return letter if non_letter?(letter)
+  index = ALPHABET.index(letter.downcase)
+  move.times do
+    index += 1
+    index = index > 25 ? 0 : index
+  end
+  return capital?(letter) ? ALPHABET[index].upcase : ALPHABET[index]
+end
+
+def encode_msg(msg, cipher=nil)
+  cipher ||= make_cipher()
+  plain_msg = string_prep(msg)
+  encoded_msg = plain_msg.map do |char|
+    encode_letter(char,cipher)
+  end.join("")
+  return encoded_msg
+end
+
+def final_msg(msg, cipher)
+  puts "#{msg}\n\tcipher: #{cipher}\n"
+end
+
 

@@ -226,7 +226,7 @@ end
 # as well as an array of all the pos matches, in order as well
 
 
-describe "decode a message" do
+describe "descramble message" do
   context "getting user encoded msg" do
     before(:each) do
       @machine = Encoder.new
@@ -300,6 +300,9 @@ describe "decode a message" do
     end
   end
 
+end
+
+describe "sorting descrambled messages" do
   context "has words?" do
     before(:each) do
       @machine = Encoder.new
@@ -327,9 +330,50 @@ describe "decode a message" do
       @machine.newly_decoded_msg = "1 2 3 4 1994"
       expect(@machine.has_words?).to be false
     end
+  end
+
+  context "put message in matches or no matches array" do 
+    before(:each) do
+      @machine = Encoder.new
+    end
+    it "machine should have pos_matches and rejects arrays" do
+      expect(@machine.pos_matches.is_a?(Array)).to be true
+      expect(@machine.rejects.is_a?(Array)).to be true
+    end
+    it "should add strings with english words into pos_matches" do
+      @machine.newly_decoded_msg = "All about a" 
+      @machine.sort_decoded_msgs
+      expect(@machine.pos_matches.length).to eq(1)
+    end
+    it "should add strings with no english words into rejects" do
+      @machine.newly_decoded_msg = "asdfa fasdgfag asdfa s"
+      @machine.sort_decoded_msgs
+      expect(@machine.rejects.length).to eq(1)
+    end
 
   end
 
+  context "word_count" do
+    before(:each) do
+      @machine = Encoder.new
+    end
+    it "should return an int" do
+       @machine.newly_decoded_msg = "All about a" 
+       expect(@machine.word_count.is_a?(Fixnum)).to be true
+    end
+    it "should return the number of words in a string" do
+       @machine.newly_decoded_msg = "All about a" 
+       expect(@machine.word_count).to eq(3)
+    end
+    it "should ignore non english words" do
+       @machine.newly_decoded_msg = "gh alsdj kasd" 
+       expect(@machine.word_count).to eq(0)
+    end
+    it "should count english words while ignoring non english words" do
+       @machine.newly_decoded_msg = "gh alsdj for this kasd" 
+       expect(@machine.word_count).to eq(2)
+    end
+  end
 
 end
 

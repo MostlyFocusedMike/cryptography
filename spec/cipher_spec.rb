@@ -247,21 +247,21 @@ describe "descramble message" do
       @machine = Encoder.new
     end
     it "should only take one argument" do 
-      expect{@machine.descramble_letter("b","b")}.to raise_error(ArgumentError)
-      expect{@machine.descramble_letter("b")}.not_to raise_error(ArgumentError)
+      expect{@machine.roll_back_letter("b","b")}.to raise_error(ArgumentError)
+      expect{@machine.roll_back_letter("b")}.not_to raise_error(ArgumentError)
     end 
     it "should move each letter back one spot" do
-      expect(@machine.descramble_letter("b")).to eq("a")
+      expect(@machine.roll_back_letter("b")).to eq("a")
     end
     it "should leave non letters alone" do
       chars = [" ", ",", ".", "!","?","'","\"","1","0","(",")","{","}","[","]","<",">","/"]
       chars.each do |char|
-        expect(@machine.descramble_letter(char)).to eq(char)
+        expect(@machine.roll_back_letter(char)).to eq(char)
       end
     end
     it "should match capital state" do
-      expect(@machine.descramble_letter("b")).to eq("a")
-      expect(@machine.descramble_letter("B")).to eq("A")
+      expect(@machine.roll_back_letter("b")).to eq("a")
+      expect(@machine.roll_back_letter("B")).to eq("A")
     end
   end
 
@@ -271,31 +271,31 @@ describe "descramble message" do
     end
 
     it "should take no arguments" do
-      expect{@machine.descramble_msg("b")}.to raise_error(ArgumentError)
-      expect{@machine.descramble_msg}.not_to raise_error(ArgumentError)
+      expect{@machine.roll_back_message("b")}.to raise_error(ArgumentError)
+      expect{@machine.roll_back_message}.not_to raise_error(ArgumentError)
     end
     it "should return a string" do
       @machine.encoded_msg = "abc"
-      @machine.descramble_msg
+      @machine.roll_back_message
       puts @machine.newly_decoded_msg
       expect(@machine.newly_decoded_msg.class).to eq(String)
     end
     
     it "should move all letters back one spot" do
       @machine.encoded_msg = "bcd"
-      @machine.descramble_msg
+      @machine.roll_back_message
       expect(@machine.newly_decoded_msg).to eq("abc")
     end
     
     it "should leave capitalization alone" do 
       @machine.encoded_msg = "BbBbBb"
-      @machine.descramble_msg
+      @machine.roll_back_message
       expect(@machine.newly_decoded_msg).to eq("AaAaAa")
     end
 
     it "should leave punctuation and spaces alone" do
       @machine.encoded_msg = ". , ! ? $ / #"
-      @machine.descramble_msg
+      @machine.roll_back_message
       expect(@machine.newly_decoded_msg).to eq(". , ! ? $ / #")
     end
   end

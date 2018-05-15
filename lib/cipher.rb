@@ -1,20 +1,11 @@
+require_relative './common_words.rb'
+require 'pry'
 class Encoder
-  ALPHABET = ["a","b","c","d","e","f","g","h","i","j","k","l",
-            "m","n",'o','p','q','r','s','t','u','v','w','x',
-            'y','z']
-  COMMON_WORDS = ["a", "am", "about", "all", "also", "and", "as", "at", "be", "because", "but", 
-                  "by", "can", "come", "could", "day", "do", "even", "find", "first", "for", 
-                  "from", "get", "give", "go", "have", "he", "her", "here", "him", "his", 
-                  "how", "i", "if", "in", "into", "it", "its", "just", "know", "like", "look", 
-                  "make", "man", "many", "me", "more", "my", "new", "no", "not", "now", "of", 
-                  "on", "one", "only", "or", "other", "our", "out", "people", "say", "see", 
-                  "she", "so", "some", "take", "tell", "than", "that", "the", "their", "them", 
-                  "then", "there", "these", "they", "thing", "think", "this", "those", "time", 
-                  "to", "two", "up", "use", "very", "want", "way", "we", "well", "what", 
-                  "when", "which", "who", "will", "with", "would", "year", "you", "your"]
+  ALPHABET = ["a","b","c","d","e","f","g","h","i","j","k","l", "m","n",'o','p','q',
+              'r','s','t','u','v','w','x', 'y','z']
 
   attr_accessor :cipher, :msg, :encoded_msg, :newly_decoded_msg, :matches, :misses,
-    :newly_encoded_msg
+    :newly_encoded_msg, :fin_decoded_msg
   def initialize
     self.make_cipher
     @matches = @misses = []
@@ -99,9 +90,7 @@ class Encoder
   def sort_phrase
     if self.has_words?
       wc = self.count_words
-      self.matches.push(@newly_decoded_msg => wc)
-    else
-      #self.misses.push(@newly_decoded_msg)
+      self.matches.push({msg: @newly_decoded_msg, wc: wc})
     end
   end 
 
@@ -111,7 +100,6 @@ class Encoder
       self.sort_phrase
       @encoded_msg = @newly_decoded_msg
     end
-    puts @matches
   end
   # basically the "run" method of the class
   def encode_user_msg
@@ -125,6 +113,8 @@ class Encoder
 
   def decode_user_msg
     @encoded_msg ||= self.get_user_encoded_msg
+    self.fill_matches_misses
+    self.fin_decoded_msg = self.matches.sort_by {|match| match[:wc]}[-1][:msg]
   end
 
 end
@@ -133,6 +123,6 @@ def run
   print "Enter your message here: "
   encoder = Encoder.new 
   encoder.encode_user_msg
-  encoder.get_user_encoded_msg
-  encoder.fill_matches_misses
+  encoder.decode_user_msg
+  puts encoder.fin_decoded_msg
 end

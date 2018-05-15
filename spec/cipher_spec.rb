@@ -1,170 +1,173 @@
 RSpec::Expectations.configuration.on_potential_false_positives = :nothing
-#  context "input test" do
-#    it "should return what is given" do
-#      expect(self).to receive(:gets).and_return("bar")
-#      expect(test_input).to eq("bar")
-#    end
-#
-#  end
-#
-#  context "output tests" do
-#    it "should check puts is ok" do
-#      expect($stdout).to receive(:puts).with("hello there")
-#      test_puts
-#    end
-#    it "should check puts is ok new version" do
-#      expect{test_puts}.to output("hello there\n").to_stdout
-#    end
-#    it "should check print is ok new version" do
-#      expect{test_print}.to output("hello there").to_stdout
-#    end
-#
-#  end
+
 require_relative "../cipher.rb"
-           # expect(sa.has_vowels? test_string).to be false
 
 describe "cipher prep" do
 
   context "make cipher" do 
+    before(:each) do 
+      @machine = Encoder.new
+    end 
     it "generates a number" do 
-      expect(make_cipher.kind_of?(Integer)).to be true
+      expect(@machine.make_cipher.kind_of?(Integer)).to be true
     end
     it "makes a random number" do
-      expect(make_cipher.class).to eq(Fixnum)
+      expect(@machine.make_cipher.class).to eq(Fixnum)
     end
     it "should never be0 or 26" do 
       nums = []
-      10000.times {nums << make_cipher.to_s} 
+      10000.times {nums << @machine.make_cipher.to_s} 
       any_0_26 = nums.include?("26") || nums.include?("26") 
       expect(any_0_26).not_to be true
     end
   end
 
   context "convert string to array" do 
+    before(:each) do 
+      @machine = Encoder.new
+    end 
     it "it should return an array" do
       str = "HelLo"
-      expect(string_prep(str).kind_of?(Array)).to be true
+      expect(@machine.string_prep(str).kind_of?(Array)).to be true
     end
     it "should preserve spaces and punctuatuion" do
       str = "Hello there, friend!"
-      expect(string_prep(str).join("")).to eq(str)
+      expect(@machine.string_prep(str).join("")).to eq(str)
     end
   end
 
   
   context "capital test" do
+    before(:each) do 
+      @machine = Encoder.new
+    end 
     it "should return true if a letter is capital" do
-      expect(capital?("A")).to be true
+      expect(@machine.capital?("A")).to be true
     end
     it "should return false if letter is lowercase" do
-      expect(capital?("a")).to be false
+      expect(@machine.capital?("a")).to be false
     end
     it "should return false if punctuation" do
       chars = [" ", ",", ".", "!","?","'","\"","1","0","(",")","{","}","[","]","<",">","/"]
       chars.each do |char|
-        expect(capital?(char)).to be false
+        expect(@machine.capital?(char)).to be false
       end
     end
     it "should raise an error if given 2 args" do
-      expect {capital?(1, "h")}.to raise_error(ArgumentError) 
+      expect {@machine.capital?(1, "h")}.to raise_error(ArgumentError) 
     end
 
   end
  
   context "check if a non letter" do
+    before(:each) do 
+      @machine = Encoder.new
+    end 
     it "should return true if punct" do
       chars = [" ", ",", ".", "!","?","'","\"","1","0","(",")","{","}","[","]","<",">","/"]
       chars.each do |char|
-        expect(non_letter?(char)).to be true
+        expect(@machine.non_letter?(char)).to be true
       end
     end
 
     it "should return false if number" do
-      expect(non_letter?(1)).to be true
-      expect(non_letter?(0)).to be true
+      expect(@machine.non_letter?(1)).to be true
+      expect(@machine.non_letter?(0)).to be true
     end
     
     it "should return false if upperlower lettter" do
-      expect(non_letter?("a")).to be false
-      expect(non_letter?("A")).to be false
+      expect(@machine.non_letter?("a")).to be false
+      expect(@machine.non_letter?("A")).to be false
     end
   end
 
   context "looping tests" do
+    before(:each) do 
+      @machine = Encoder.new
+    end 
     it "should be able to stay itself" do
-      expect(encode_letter("g",0)).to eq("g")  
+      expect(@machine.scramble_letter("g",0)).to eq("g")  
     end
     it "should move one letter past the end" do
-      expect(encode_letter("z",1)).to eq("a")  
+      expect(@machine.scramble_letter("z",1)).to eq("a")  
     end
 
     it "should be able to loop back to itself" do
-      expect(encode_letter("a",26)).to eq("a")  
+      expect(@machine.scramble_letter("a",26)).to eq("a")  
     end
 
     it "should do multiple loops to itself" do
-      expect(encode_letter("a",52)).to eq("a")  
+      expect(@machine.scramble_letter("a",52)).to eq("a")  
     end
 
     it "should do multiple loops past itself" do
-      expect(encode_letter("a",53)).to eq("b")  
+      expect(@machine.scramble_letter("a",53)).to eq("b")  
     end
     it "should return capitals" do
-      expect(encode_letter("A",53)).to eq("B")  
+      expect(@machine.scramble_letter("A",53)).to eq("B")  
     end
     it "should return lowercase" do
-      expect(encode_letter("a",53)).to eq("b")  
+      expect(@machine.scramble_letter("a",53)).to eq("b")  
     end
     it "should return punctuation as is" do
-      expect(encode_letter(".", 0)).to eq(".")
+      expect(@machine.scramble_letter(".", 0)).to eq(".")
     end
     it "should return punctuation as is even with move" do
-      expect(encode_letter(".", 0)).to eq(".")
+      expect(@machine.scramble_letter(".", 0)).to eq(".")
     end
 
   end
 
   context "encode message" do 
+    before(:each) do 
+      @machine = Encoder.new
+    end 
     it "should work with just a string argument" do
-      expect {encode_msg("hey") }.not_to raise_error(ArgumentError)
+      expect {@machine.encode_msg("hey") }.not_to raise_error(ArgumentError)
     end
     it "should work with a string and cipher argument" do
-      expect {encode_msg("hey", 3) }.not_to raise_error(ArgumentError)
+      expect {@machine.encode_msg("hey", 3) }.not_to raise_error(ArgumentError)
     end
     it "should return a string" do
-      expect(encode_msg("hh").kind_of?(String)).to be true
+      @machine.msg = "hh"
+      @machine.encode_user_msg
+      expect(@machine.newly_encoded_msg.kind_of?(String)).to be true
     end
     it "should return a new message" do
-      msg = "hello"
-      expect(encode_msg(msg)).not_to eq(msg)
+      t_msg = "hello"
+      @machine.msg = t_msg
+      @machine.encode_user_msg
+      expect(@machine.newly_encoded_msg).not_to eq(t_msg)
     end
     it "should return a new message of same length" do
-      msg = "hello"
-
-      expect(encode_msg(msg).length).to eq(msg.length)
+      t_msg = "hello"
+      @machine.msg = t_msg
+      @machine.encode_user_msg
+      expect(@machine.newly_encoded_msg.length).to eq(t_msg.length)
     end
     it "should return 'def' when given 'abc'' with cpher 3" do
-      expect(encode_msg("abc", 3)).to eq("def")
+      t_msg = "abc"
+      @machine.msg = t_msg
+      @machine.cipher = 3
+      @machine.encode_user_msg
+      expect(@machine.newly_encoded_msg).to eq("def")    
     end
     it "should conserve spaces in message" do
-      msg = "Hello there"
-      expect(encode_msg(msg, 0)).to eq("Hello there")
+      t_msg = "abc def"
+      @machine.msg = t_msg
+      @machine.cipher = 0
+      @machine.encode_user_msg
+      expect(@machine.newly_encoded_msg).to eq("abc def") 
     end
     it "should conserve punctuiation" do
-      msg = "Hello, there."
-      expect(encode_msg(msg, 0)).to eq(msg)
-    end
-
-  end
-
-  context "final message format" do
-    it "should take a string and integer" do 
-      expect{ final_msg("hey", 1)}.not_to raise_error(ArgumentError)
-    end
-    it "should output a string" do
-      expect{final_msg("hey", 1)}.to output("hey\n\tcipher: 1\n").to_stdout
+      t_msg = "Hello, there."
+      @machine.msg = t_msg
+      @machine.cipher = 0
+      @machine.encode_user_msg
+      expect(@machine.newly_encoded_msg).to eq("Hello, there.") 
     end
   end
+
 
   context "encoder class" do
     before(:each) do
@@ -197,33 +200,6 @@ describe "cipher prep" do
 end
 
 
-
-
-# take in a string
-#
-# chop that string into an array
-#
-# move each letter  one place over
-#
-# if the char is not a letter, do nothing
-#
-# join the new array into a string
-#
-# check if new string contains any of the basic words
-#
-# if so, add it to an array, "pos matches" 
-#
-# if not, ignore it
-#
-# repeat steps with the new string
-#
-# continue for 25 times
-#
-# of the pos matches array, check how many words are in each
-#
-# return the one with the most matches
-#
-# as well as an array of all the pos matches, in order as well
 
 
 describe "descramble message" do
@@ -332,48 +308,21 @@ describe "sorting descrambled messages" do
     end
   end
 
-  context "put message in matches or no matches array" do 
+  context "put message in matches or misses array" do 
     before(:each) do
       @machine = Encoder.new
     end
-    it "machine should have pos_matches and rejects arrays" do
-      expect(@machine.pos_matches.is_a?(Array)).to be true
-      expect(@machine.rejects.is_a?(Array)).to be true
+    it "machine should have matches and misses arrays" do
+      expect(@machine.matches.is_a?(Array)).to be true
+      expect(@machine.misses.is_a?(Array)).to be true
     end
-    it "should add strings with english words into pos_matches" do
-      @machine.newly_decoded_msg = "All about a" 
-      @machine.sort_decoded_msgs
-      expect(@machine.pos_matches.length).to eq(1)
-    end
-    it "should add strings with no english words into rejects" do
-      @machine.newly_decoded_msg = "asdfa fasdgfag asdfa s"
-      @machine.sort_decoded_msgs
-      expect(@machine.rejects.length).to eq(1)
-    end
-
   end
 
   context "word_count" do
     before(:each) do
       @machine = Encoder.new
     end
-    it "should return an int" do
-       @machine.newly_decoded_msg = "All about a" 
-       expect(@machine.word_count.is_a?(Fixnum)).to be true
-    end
-    it "should return the number of words in a string" do
-       @machine.newly_decoded_msg = "All about a" 
-       expect(@machine.word_count).to eq(3)
-    end
-    it "should ignore non english words" do
-       @machine.newly_decoded_msg = "gh alsdj kasd" 
-       expect(@machine.word_count).to eq(0)
-    end
-    it "should count english words while ignoring non english words" do
-       @machine.newly_decoded_msg = "gh alsdj for this kasd" 
-       expect(@machine.word_count).to eq(2)
-    end
-  end
+  end 
 
 end
 

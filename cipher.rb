@@ -13,7 +13,8 @@ class Encoder
                   "to", "two", "up", "use", "very", "want", "way", "we", "well", "what", 
                   "when", "which", "who", "will", "with", "would", "year", "you", "your"]
 
-  attr_accessor :cipher, :msg, :encoded_msg, :newly_decoded_msg, :matches, :misses
+  attr_accessor :cipher, :msg, :encoded_msg, :newly_decoded_msg, :matches, :misses,
+    :newly_encoded_msg
   def initialize
     self.make_cipher
     @matches = @misses = []
@@ -126,7 +127,6 @@ class Encoder
     @encoded_msg ||= self.get_user_encoded_msg
   end
 
-
 end
 
 def run
@@ -136,115 +136,3 @@ def run
   encoder.get_user_encoded_msg
   encoder.fill_matches_misses
 end
-
-# old methods leave in place so old tests pass
-#
-ALPHABET = ["a","b","c","d","e","f","g","h","i","j","k","l",
-            "m","n",'o','p','q','r','s','t','u','v','w','x',
-            'y','z']
-def make_cipher
-  return rand(1..25)
-end
-
-def string_prep(str) 
-  return str.split("")
-end
-
-def capital?(letter)
-  return /[[:upper:]]/.match(letter) ? true : false
-end
-
-def non_letter?(letter)
-  return /[[a-zA-Z]]/.match(letter.to_s) ? false : true 
-end
-
-def encode_letter(letter, move)
-  return letter if non_letter?(letter)
-  index = ALPHABET.index(letter.downcase)
-  move.times do
-    index += 1 
-    index = index > 25 ? 0 : index  
-  end 
-  return capital?(letter) ? ALPHABET[index].upcase : ALPHABET[index]
-end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# initial procedural functions
-ALPHABET = ["a","b","c","d","e","f","g","h","i","j","k","l",
-            "m","n",'o','p','q','r','s','t','u','v','w','x',
-            'y','z']
-def make_cipher
-  return rand(1..25)
-end
-
-def string_prep(str)
-  return str.split("")
-end
-
-def capital?(letter)
-  return /[[:upper:]]/.match(letter) ? true : false
-end
-
-def non_letter?(letter)
-  return /[[a-zA-Z]]/.match(letter.to_s) ? false : true
-end
-
-def encode_letter(letter, move)
-  return letter if non_letter?(letter)
-  index = ALPHABET.index(letter.downcase)
-  move.times do
-    index += 1
-    index = index > 25 ? 0 : index
-  end
-  return capital?(letter) ? ALPHABET[index].upcase : ALPHABET[index]
-end
-
-def encode_msg(msg, cipher=nil)
-  cipher ||= make_cipher()
-  plain_msg = string_prep(msg)
-  encoded_msg = plain_msg.map do |char|
-=======
-def encode_msg(msg, cipher=nil)
-  cipher ||= make_cipher()
-  plain_msg = string_prep(msg)
-  encoded_msg = plain_msg.map do |char| 
->>>>>>> add basic misses matches method, add how many words method
-    encode_letter(char,cipher)
-  end.join("")
-  return encoded_msg
-end
-
-def final_msg(msg, cipher)
-  puts "#{msg}\n\tcipher: #{cipher}\n"
-end
-
-
